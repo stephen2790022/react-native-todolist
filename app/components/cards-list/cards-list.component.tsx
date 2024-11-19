@@ -1,27 +1,48 @@
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { s } from "./cards-list.style";
-import fakeList from "./list.json";
+
 import { useState } from "react";
-import { TabValues } from "@/app/index";
+import { CardList, TabValues } from "@/app/index";
 
 type CardProps = {
   id: number;
   title: string;
   completed: boolean;
   toggleCompleted: (id: number) => void;
-};
-
-type CardList = {
-  id: number;
-  title: string;
-  completed: boolean;
+  handleDelete: (id: number) => void;
 };
 
 const Card = (props: CardProps) => {
-  const { title, completed, toggleCompleted } = props;
+  const { title, completed, id, toggleCompleted, handleDelete } = props;
   const check = require("@/assets/images/check.png");
+
+  const handleLongPress = () => {
+    Alert.alert("Alert Title", "Do you want to delete this Todo", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => handleDelete(id),
+        style: "destructive",
+      },
+    ]);
+  };
+
   return (
-    <TouchableOpacity style={s.card} onPress={() => toggleCompleted(props.id)}>
+    <TouchableOpacity
+      style={s.card}
+      onLongPress={handleLongPress}
+      onPress={() => toggleCompleted(id)}
+    >
       <Text
         style={[
           s.cardTitle,
@@ -36,35 +57,26 @@ const Card = (props: CardProps) => {
 };
 
 type CardsListProps = {
-  currentTab: TabValues;
+  list: CardList[];
+  toggleCompleted: (id: number) => void;
+  handleDelete: (id: number) => void;
 };
 
-export const CardsList = ({ currentTab }: CardsListProps) => {
-  const [list, setList] = useState<CardList[]>(fakeList);
-  const toggleCompleted = (id: number) => {
-    setList((prev) =>
-      prev.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
-
-  function handleTabFilter() {
-    switch (currentTab) {
-      case TabValues.ALL:
-        return list;
-      case TabValues.IN_PROGRESS:
-        return list.filter((todo) => !todo.completed);
-      case TabValues.COMPLETED:
-        return list.filter((todo) => todo.completed === true);
-    }
-  }
-
+export const CardsList = ({
+  list,
+  toggleCompleted,
+  handleDelete,
+}: CardsListProps) => {
   return (
     <ScrollView>
       <View style={s.cardContainer}>
-        {handleTabFilter().map((infos) => (
-          <Card key={infos.id} {...infos} toggleCompleted={toggleCompleted} />
+        {list.map((infos) => (
+          <Card
+            key={infos.id}
+            {...infos}
+            toggleCompleted={toggleCompleted}
+            handleDelete={handleDelete}
+          />
         ))}
       </View>
     </ScrollView>

@@ -17,8 +17,7 @@ export const Modal = ({
   return (
     <View>
       <Dialog.Container visible={isOpen}>
-        <Dialog.Title>Add a new To do</Dialog.Title>
-        <Dialog.Description>Add a new To do to the list</Dialog.Description>
+        <Dialog.Title>Add a new To do to the list</Dialog.Title>
         <Dialog.Input onChangeText={(v) => handleInputChange(v)} />
         <Dialog.Button onPress={handleModalOpen} label="Cancel" />
         <Dialog.Button onPress={handleAdd} label="Add" />

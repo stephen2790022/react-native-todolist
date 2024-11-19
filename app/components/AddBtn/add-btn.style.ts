@@ -17,7 +17,7 @@ export const s = StyleSheet.create({
     alignItems: "center",
   },
   btnText: {
-    color: "black",
+    color: "#2F76E5",
     fontSize: 24,
     fontWeight: "bold",
   },

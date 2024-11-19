@@ -5,6 +5,7 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F9F9F9",
     paddingHorizontal: 10,
+    position: "relative",
   },
   headerContainer: {
     flex: 1,

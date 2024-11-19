@@ -12,11 +12,11 @@ import { useState } from "react";
 import { CardList, TabValues } from "@/app/index";
 
 type CardProps = {
-  id: number;
+  id: number | string;
   title: string;
   completed: boolean;
-  toggleCompleted: (id: number) => void;
-  handleDelete: (id: number) => void;
+  toggleCompleted: (id: number | string) => void;
+  handleDelete: (id: number | string) => void;
 };
 
 const Card = (props: CardProps) => {
@@ -58,8 +58,8 @@ const Card = (props: CardProps) => {
 
 type CardsListProps = {
   list: CardList[];
-  toggleCompleted: (id: number) => void;
-  handleDelete: (id: number) => void;
+  toggleCompleted: (id: number | string) => void;
+  handleDelete: (id: number | string) => void;
 };
 
 export const CardsList = ({

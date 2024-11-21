@@ -1,11 +1,12 @@
 import { Alert, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import s from "./home.style";
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Header } from "./components/header/header.component";
 import { CardsList } from "./components/cards-list/cards-list.component";
 import { Footer } from "./components/footer/footer.component";
-import fakeList from "./components/cards-list/list.json";
+import _ from "lodash";
 import { AddBtn } from "./components/AddBtn/add-btn.component";
 import { Modal } from "./components/Modal/modal.component";
 import "react-native-get-random-values";
@@ -29,7 +30,7 @@ export default function Index() {
   const [inputValue, setInputValue] = useState("");
   const handleTabPress = (tab: TabValues) => setCurrentTab(tab);
   const isActive = (tab: TabValues) => tab === currentTab;
-  const [list, setList] = useState<CardList[]>(fakeList);
+  const [list, setList] = useState<CardList[]>([]);
 
   const handleModalOpen = () => {
     setIsOpen((prev) => !prev);
@@ -40,20 +41,32 @@ export default function Index() {
 
   const handleInputChange = (value: string) => setInputValue(value);
 
-  const handleAdd = () => {
+  const getSavedData = async () => {
+    const jsonValue = await AsyncStorage.getItem("todoList");
+    const parsedData: CardList[] =
+      jsonValue != null ? JSON.parse(jsonValue) : [];
+    return parsedData;
+  };
+
+  const handleSaveData = async () => {
+    const newToDoListJson = JSON.stringify(list);
+    await AsyncStorage.setItem("todoList", newToDoListJson);
+  };
+
+  const handleAdd = async () => {
     try {
-      if (!inputValue) return;
+      if (!inputValue) {
+        throw new Error("Enter a value please");
+      } else {
+        const newTodo = { id: uuidv4(), title: inputValue, completed: false };
+        const newTodoList = [newTodo, ...list];
+        setList(newTodoList);
+        setInputValue("");
 
-      setList((prev) => [
-        { id: uuidv4(), title: inputValue, completed: false },
-        ...prev,
-      ]);
-      setInputValue("");
-
-      setIsOpen(false);
+        setIsOpen(false);
+      }
     } catch (error) {
-      console.error("An error occurred while adding the item:", error);
-      Alert.alert("Alert Title", "An error occurred while adding the item", [
+      Alert.alert("Alert Title", (error as Error).message, [
         {
           text: "Close",
           style: "cancel",
@@ -89,6 +102,25 @@ export default function Index() {
   const handleDelete = (id: number | string) => {
     setList((prev) => prev.filter((todo) => todo.id !== id));
   };
+
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    getSavedData().then((data) => setList(data));
+  }, []);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    getSavedData().then((data) => {
+      if (!_.isEqual(data, list)) {
+        handleSaveData();
+        console.log(list);
+      }
+    });
+  }, [list]);
 
   return (
     <Fragment key="Home">

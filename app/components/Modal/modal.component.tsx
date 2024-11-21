@@ -16,7 +16,7 @@ export const Modal = ({
 }: ModalProps) => {
   return (
     <View>
-      <Dialog.Container visible={isOpen}>
+      <Dialog.Container onBackdropPress={handleModalOpen} visible={isOpen}>
         <Dialog.Title>Add a new To do to the list</Dialog.Title>
         <Dialog.Input onChangeText={handleInputChange} />
         <Dialog.Button onPress={handleModalOpen} label="Cancel" />

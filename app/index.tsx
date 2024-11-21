@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import s from "./home.style";
 import { Fragment, useCallback, useMemo, useState } from "react";
@@ -53,6 +53,12 @@ export default function Index() {
       setIsOpen(false);
     } catch (error) {
       console.error("An error occurred while adding the item:", error);
+      Alert.alert("Alert Title", "An error occurred while adding the item", [
+        {
+          text: "Close",
+          style: "cancel",
+        },
+      ]);
     }
   };
 

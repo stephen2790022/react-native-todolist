@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import { s } from "./cards-list.style";
 
-import { useState } from "react";
-import { CardList, TabValues } from "@/app/index";
+import { CardList } from "@/app/index";
 
 type CardProps = {
   id: number | string;
